@@ -1,0 +1,87 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model StudySession {
+  id              String       @id @default(cuid())
+  type            String
+  section         String
+  score           Float
+  maxScore        Float?
+  date            DateTime
+  durationMinutes Int?
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  date        DateTime
+  deadline    DateTime?
+  priority    String     @default("Medium")
+  status      String     @default("Todo")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Habit {
+  id            String     @id @default(cuid())
+  title         String
+  description   String?
+  targetPerWeek Int?
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  logs          HabitLog[]
+}
+
+model HabitLog {
+  id        String   @id @default(cuid())
+  habitId   String
+  date      DateTime
+  completed Boolean  @default(true)
+  createdAt DateTime @default(now())
+  habit     Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+
+  @@unique([habitId, date])
+}
+
+model VocabularyWord {
+  id          String       @id @default(cuid())
+  word        String
+  translation String
+  category    String       @default("General")
+  synonym     String?
+  antonym     String?
+  example     String?
+  learned     Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+}
+
+model Note {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  date      DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Goal {
+  id           String   @id @default(cuid())
+  title        String
+  type         String   @default("General")
+  targetScore  Float?
+  currentScore Float?
+  deadline     DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
